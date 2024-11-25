@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+
+body{
+    background: #58595a !important;
+   }
+   
+   #side_nav{
+    background: #2C2F33;
+    min-width: 260px;
+    max-width: 260px;
+    transition: all 0.3s;
+   }
+   .content{
+      min-height: 100vh;
+      width: 100%;
+   }
+   hr.h-color{
+     background: #23272A;
+   }
+   
+   .sidebar li.active{
+      background: #eee;
+      border-radius: 8px;
+   }
+
+   .sidebar a:hover{
+    background: rgba(237, 232, 232, 0.09);
+    border-radius: 8px;
+    transition: .3s;
+   }
+   
+   .sidebar li.active a, .sidebar li.active a:hover {
+    color: #2C2F33;
+   }
+   .sidebar li a{
+    color: #fff;
+   }
+
+   .sticky-container {
+    position: sticky;
+    top: 0;
+    bottom: 0;
+   }
+
+   #side_nav.hidden {
+    margin-left: -260px;
+    
+   }
+   
+   @media(max-width: 767px){
+    #side_nav{
+      margin-left: -250px;
+      min-height: 100vh;
+      z-index: 1;
+   
+    }
+    #side_nav.active{
+      margin-left: 0;
+     }
+   }
+
+   .close-btn {
+    all: unset;
+    color: white;
+    padding: 2%;
+    padding-left: 5%;
+    padding-right: 5%;
+    border-radius: 50%;
+    font-size:140%;
+    margin-top: -3px;
+   }
+  
+   .close-btn:hover{
+    background: rgb(255, 255, 255, 0.2);
+    transition: .2s;
+   }
+
+   .open-btn {
+    all: unset;
+    color: #ffffff;
+    height: 50px;
+    width: 50px; 
+    border-radius: 50%;
+    font-size: 140%;
+    margin-top: 20px;
+    margin-left: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+   }
+
+   .open-btn i{
+    margin-left: 15px;
+    padding: 0;
+   }
+
+   .open-btn:hover{
+    background: rgba(63, 62, 62, 0.2);
+    transition: .2s;
+   }
+
+   .open-btn{
+    position: sticky;
+    top: 20px;
+
+   }
+    </style>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Web App</title>
+
+    <!-- Bootstrap CSS-->
+    <script src="https://kit.fontawesome.com/0b7906fd81.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='predictproject/styles.css') }}"> -->
+<!--  <link rel="stylesheet" href="/static/predictproject/styles.css"> -->
+</head>
+<body>
+    <div class="main-container d-flex">
+        <div class="sidebar" id="side_nav">
+            <div class="sticky-container">
+            <div class="header-box px-2 pt-3 pb-4 d-flex justify-content-between">
+                <h1 class="fs-4"><span class="bg-white text-dark rounded shadow px-2 me-2">PA</span> <span
+                        class="text-white">Predict App</span></h1>
+                <button class="close-btn"><i class="fa-solid fa-x"></i></button>
+            </div>
+    
+                <ul class="list-unstyled px-2">
+                    <li class=""><h5><a href="/" class="text-decoration-none px-3 py-2 d-block">
+                        <i class="fa-solid fa-diagram-project"></i> Classification</a></h5></li>
+                    <li class=""><h5><a href="/regression" class="text-decoration-none px-3 py-2 d-block"><i class="fa-solid fa-square-poll-vertical"></i>
+                            Regression</a></h5></li>
+                    <li class="active"><h5><a href="" class="text-decoration-none px-3 py-2 d-block"><i class="fa-solid fa-chart-pie"></i>
+                            Chart</a></h5></li>
+                </ul>
+            </div>
+        </div>
+        <div class="btn-container">
+            <button class="open-btn" style="display: none;"><i class="fa-solid fa-bars"></i></button>
+        </div>
+
+        <!--THE BODY OF THE WEB APP-->
+        <div class="content">
+            <div class="dashboard-content px-3 pt-4" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">        
+                <h1 class="text-light">Weather Pie Chart</h1>
+                <div style="justify-content: center; width: 600px; height: 600px;">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+            <div class="dashboard-content px-3 pt-4" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">        
+                <h1 class="text-light">Rainfall Line Chart</h1>
+                <div style="justify-content: center; width: 1000px; height: 1000px;">
+                    <canvas id="myLineChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
+<!-- <script>
+    function monthCheck() {
+        var monthNum = parseFloat(document.getElementsByName("month")[0].value);
+        
+
+        // Check if temp_min is greater than temp_max
+        if (monthNum > 12) {
+            alert("There are only 12 months in a year");
+            return false; // Prevent form submission
+        }
+
+        // Continue with form submission if validation passes
+        return true;
+    }
+</script> -->
+
+<!--    <script>
+        function validateForm() {
+            var spec_hum = parseFloat(document.getElementsByName("specific_humidity")[0].value);
+            var rel_hum = parseFloat(document.getElementsByName("relative_humidity")[0].value);
+    
+            // Check if temp_min is greater than temp_max
+            if (spec_hum > rel_hum) {
+                alert("Specific Humidity cannot be greater then Relative Humidity");
+                return false; // Prevent form submission
+            }
+    
+            // Continue with form submission if validation passes
+            return true;
+        }
+    </script> -->
+    <script>
+      var ctx = document.getElementById('myChart').getContext('2d');
+      var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: {{ labels|tojson }},
+                datasets: [{
+                    data: {{ values|tojson }},
+                    backgroundColor: [
+                        'rgba(83, 120, 158, 1)',
+                        'rgba(255, 204, 51, 1)',
+                        'rgba(133, 139, 143, 1)',
+                        'rgba(197, 226, 247, 1)',
+                        'rgba(252, 252, 252, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                }
+            }
+        });
+
+        var ctxLine = document.getElementById('myLineChart').getContext('2d');
+        var myChart = new Chart(ctxLine, {
+            type: 'line',
+            data: {
+                labels: {{ labels_line|tojson }},
+                datasets: [{
+                    label: 'Rainfall Depth (mm)',
+                    data: {{ sizes_line|tojson }},
+                    borderWidth: 2,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            color: 'white'
+                        },
+                        ticks: {
+                            color: 'white'
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Rainfall Depth',
+                            color: 'white'  // change color of y-axis title
+                        },
+                        min: 0,  // set min value
+                        max: 900,  // set max value
+                        ticks: {
+                            color: 'white'  // change color of y-axis labels
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var sideNav = document.querySelector('#side_nav');
+            var closeButton = document.querySelector('.close-btn');
+            var openButton = document.querySelector('.open-btn');
+        
+            closeButton.addEventListener('click', function() {
+                sideNav.classList.toggle('hidden');
+                closeButton.style.display = 'none';
+                openButton.style.display = 'block';
+            });
+        
+            openButton.addEventListener('click', function() {
+                sideNav.classList.toggle('hidden');
+                openButton.style.display = 'none';
+                closeButton.style.display = 'block';
+            });
+        });
+    </script>    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+</body>
+</html>
